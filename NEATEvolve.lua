@@ -28,6 +28,9 @@ elseif gameinfo.getromname() == "Super Mario Bros." then
     }
 end
 
+
+-- coefficients
+
 BoxRadius = 6
 InputSize = (BoxRadius*2+1)*(BoxRadius*2+1)
 
@@ -55,6 +58,9 @@ TimeoutConstant = 20
 
 MaxNodes = 1000000
 
+
+
+-- game inputs
 function getPositions()
     if gameinfo.getromname() == "Super Mario World (USA)" then
         marioX = memory.read_s16_le(0x94)
@@ -188,15 +194,21 @@ function getInputs()
     return inputs
 end
 
+
+-- hidden node function
+
 function sigmoid(x)
     return 2/(1+math.exp(-4.9*x))-1
 end
 
+
+-- only add one to the pool size without actually creating an innovation
 function newInnovation()
     pool.innovation = pool.innovation + 1
     return pool.innovation
 end
 
+-- initialize a pool with only one genome
 function newPool()
     local pool = {}
     pool.species = {}
@@ -210,6 +222,11 @@ function newPool()
     return pool
 end
 
+-- what is the difference between species and genomes
+-- seemingly a species contains many genomes
+-- what is staleness?
+-- pool --> species --> genome --> (genes, network)
+
 function newSpecies()
     local species = {}
     species.topFitness = 0
@@ -219,6 +236,7 @@ function newSpecies()
     
     return species
 end
+
 
 function newGenome()
     local genome = {}
@@ -246,6 +264,8 @@ function copyGenome(genome)
         table.insert(genome2.genes, copyGene(genome.genes[g]))
     end
     genome2.maxneuron = genome.maxneuron
+    
+    -- not really needed. maybe an object is a better solution
     genome2.mutationRates["connections"] = genome.mutationRates["connections"]
     genome2.mutationRates["link"] = genome.mutationRates["link"]
     genome2.mutationRates["bias"] = genome.mutationRates["bias"]
@@ -265,6 +285,9 @@ function basicGenome()
     
     return genome
 end
+
+
+-- genes are the connect genes in the paper
 
 function newGene()
     local gene = {}
@@ -288,6 +311,8 @@ function copyGene(gene)
     return gene2
 end
 
+
+-- what is neron?
 function newNeuron()
     local neuron = {}
     neuron.incoming = {}
